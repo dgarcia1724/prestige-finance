@@ -4,6 +4,7 @@ import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import MobileNavbar from "@/components/MobileNavbar";
 import Header from "@/components/Header";
+import DesktopSidebar from "@/components/DesktopSidebar";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -36,7 +37,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} antialiased`}
       >
         <Header />
-        <main className="pt-16 pb-16">{children}</main>
+        <DesktopSidebar />
+        <main className="pt-16 pb-16 md:pl-64">{children}</main>
         <MobileNavbar />
       </body>
     </html>
