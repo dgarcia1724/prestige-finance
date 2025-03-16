@@ -17,3 +17,7 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.prestige-gradient {
+  background: linear-gradient(to top right, #312e81, #6b21a8, #7c3aed);
+}
