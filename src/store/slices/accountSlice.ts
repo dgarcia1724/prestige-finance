@@ -1,11 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { accounts } from "@/data/accounts";
 
+interface Transaction {
+  id: string;
+  date: string;
+  amount: number;
+  description: string;
+  category: string;
+}
+
 interface Account {
   id: string;
   type: string;
   accountNumber: string;
   balance: number;
+  transactions: Transaction[];
 }
 
 interface AccountState {
