@@ -9,8 +9,11 @@ export default function TransactionsPage() {
     (state: RootState) => state.account
   );
   const [showDateFilter, setShowDateFilter] = useState(false);
+  const [showAmountFilter, setShowAmountFilter] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [startAmount, setStartAmount] = useState("");
+  const [endAmount, setEndAmount] = useState("");
 
   // Get the selected account
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
@@ -32,21 +35,48 @@ export default function TransactionsPage() {
     });
   };
 
-  // Filter transactions by date range
+  // Filter transactions by date range and amount range
   const filteredTransactions = selectedAccount?.transactions.filter(
     (transaction) => {
-      if (!startDate && !endDate) return true;
-      const transactionDate = new Date(transaction.date);
+      // Date filtering
+      if (startDate || endDate) {
+        const transactionDate = new Date(transaction.date);
+        if (startDate && endDate) {
+          if (
+            !(
+              transactionDate >= new Date(startDate) &&
+              transactionDate <= new Date(endDate)
+            )
+          ) {
+            return false;
+          }
+        } else if (startDate) {
+          if (!(transactionDate >= new Date(startDate))) {
+            return false;
+          }
+        } else if (endDate) {
+          if (!(transactionDate <= new Date(endDate))) {
+            return false;
+          }
+        }
+      }
 
-      if (startDate && endDate) {
-        return (
-          transactionDate >= new Date(startDate) &&
-          transactionDate <= new Date(endDate)
-        );
-      } else if (startDate) {
-        return transactionDate >= new Date(startDate);
-      } else if (endDate) {
-        return transactionDate <= new Date(endDate);
+      // Amount filtering
+      if (startAmount || endAmount) {
+        const amount = Math.abs(transaction.amount);
+        if (startAmount && endAmount) {
+          if (!(amount >= Number(startAmount) && amount <= Number(endAmount))) {
+            return false;
+          }
+        } else if (startAmount) {
+          if (!(amount >= Number(startAmount))) {
+            return false;
+          }
+        } else if (endAmount) {
+          if (!(amount <= Number(endAmount))) {
+            return false;
+          }
+        }
       }
 
       return true;
@@ -90,12 +120,20 @@ export default function TransactionsPage() {
                 Account Number: •••• {selectedAccount.accountNumber.slice(-4)}
               </p>
             </div>
-            <button
-              onClick={() => setShowDateFilter(!showDateFilter)}
-              className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
-            >
-              Filter by Date
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowDateFilter(!showDateFilter)}
+                className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer"
+              >
+                Filter by Date
+              </button>
+              <button
+                onClick={() => setShowAmountFilter(!showAmountFilter)}
+                className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer"
+              >
+                Filter by Amount
+              </button>
+            </div>
           </div>
         </div>
 
@@ -122,6 +160,41 @@ export default function TransactionsPage() {
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                   className="w-full p-2 border rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showAmountFilter && (
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Minimum Amount
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={startAmount}
+                  onChange={(e) => setStartAmount(e.target.value)}
+                  className="w-full p-2 border rounded-lg"
+                  placeholder="Enter minimum amount"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Maximum Amount
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={endAmount}
+                  onChange={(e) => setEndAmount(e.target.value)}
+                  className="w-full p-2 border rounded-lg"
+                  placeholder="Enter maximum amount"
                 />
               </div>
             </div>
