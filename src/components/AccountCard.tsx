@@ -1,12 +1,22 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 interface AccountCardProps {
+  id: string;
   type: string;
   balance: number;
   accountNumber: string;
 }
 
-const AccountCard = ({ type, balance, accountNumber }: AccountCardProps) => {
+const AccountCard = ({
+  id,
+  type,
+  balance,
+  accountNumber,
+}: AccountCardProps) => {
+  const router = useRouter();
+
   // Format account number to show only last 4 digits
   const maskedNumber = `•••• ${accountNumber.slice(-4)}`;
 
@@ -66,8 +76,13 @@ const AccountCard = ({ type, balance, accountNumber }: AccountCardProps) => {
 
   const theme = getCardTheme(type);
 
+  const handleClick = () => {
+    router.push(`/profile?id=${id}`);
+  };
+
   return (
     <div
+      onClick={handleClick}
       className={`relative w-full rounded-xl shadow-sm border border-gray-100 overflow-hidden ${theme.bgGradient} transition-transform hover:scale-[1.02] cursor-pointer flex flex-col h-full`}
     >
       <div className="p-5 flex-grow">

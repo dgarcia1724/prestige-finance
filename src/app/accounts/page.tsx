@@ -15,6 +15,7 @@ export default function AccountsPage() {
         {accounts.map((account) => (
           <AccountCard
             key={account.id}
+            id={account.id}
             type={account.type}
             balance={account.balance}
             accountNumber={account.accountNumber}
