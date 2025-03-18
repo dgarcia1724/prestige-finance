@@ -5,7 +5,7 @@ import { user } from "@/data/user";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
-import { deposit, withdraw } from "@/store/slices/accountSlice";
+import { deposit, withdraw, selectAccount } from "@/store/slices/accountSlice";
 import { useState, useEffect } from "react";
 
 export default function ProfilePage() {
@@ -41,7 +41,21 @@ export default function ProfilePage() {
     setAmount("");
   };
 
-  // If no account ID is provided, use the selected account
+  // If an account ID is provided in the URL, use it and update selected account
+  useEffect(() => {
+    if (accountId) {
+      dispatch(selectAccount(accountId));
+    }
+  }, [accountId, dispatch]);
+
+  // If no account ID is provided and no account is selected, select the first account
+  useEffect(() => {
+    if (!accountId && !selectedAccountId && accounts.length > 0) {
+      dispatch(selectAccount(accounts[0].id));
+    }
+  }, [accountId, selectedAccountId, accounts, dispatch]);
+
+  // Get the current account
   const account = accountId
     ? accounts.find((acc) => acc.id === accountId)
     : accounts.find((acc) => acc.id === selectedAccountId);
