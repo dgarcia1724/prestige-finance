@@ -1,7 +1,12 @@
-import { accounts } from "@/data/accounts";
+"use client";
+
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 import AccountCard from "@/components/AccountCard";
 
 export default function AccountsPage() {
+  const { accounts } = useSelector((state: RootState) => state.account);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">

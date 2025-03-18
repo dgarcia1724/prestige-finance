@@ -47,8 +47,13 @@ const accountSlice = createSlice({
         account.balance -= action.payload.amount;
       }
     },
+    setAccountState: (state, action: PayloadAction<AccountState>) => {
+      state.accounts = action.payload.accounts;
+      state.selectedAccountId = action.payload.selectedAccountId;
+    },
   },
 });
 
-export const { selectAccount, deposit, withdraw } = accountSlice.actions;
+export const { selectAccount, deposit, withdraw, setAccountState } =
+  accountSlice.actions;
 export default accountSlice.reducer;
