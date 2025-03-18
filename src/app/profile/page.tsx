@@ -7,7 +7,10 @@ export default function ProfilePage() {
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
 
-  const account = accounts.find((acc) => acc.id === accountId);
+  // If no account ID is provided, use the first account as default
+  const account = accountId
+    ? accounts.find((acc) => acc.id === accountId)
+    : accounts[0];
 
   if (!account) {
     return (
