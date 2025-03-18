@@ -10,13 +10,20 @@ export default function TransactionsPage() {
   );
   const [showDateFilter, setShowDateFilter] = useState(false);
   const [showAmountFilter, setShowAmountFilter] = useState(false);
+  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [startAmount, setStartAmount] = useState("");
   const [endAmount, setEndAmount] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   // Get the selected account
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
+
+  // Get unique categories from transactions
+  const categories = selectedAccount
+    ? [...new Set(selectedAccount.transactions.map((t) => t.category))]
+    : [];
 
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -35,7 +42,7 @@ export default function TransactionsPage() {
     });
   };
 
-  // Filter transactions by date range and amount range
+  // Filter transactions by date range, amount range, and category
   const filteredTransactions = selectedAccount?.transactions.filter(
     (transaction) => {
       // Date filtering
@@ -77,6 +84,11 @@ export default function TransactionsPage() {
             return false;
           }
         }
+      }
+
+      // Category filtering
+      if (selectedCategory && transaction.category !== selectedCategory) {
+        return false;
       }
 
       return true;
@@ -132,6 +144,12 @@ export default function TransactionsPage() {
                 className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer"
               >
                 Filter by Amount
+              </button>
+              <button
+                onClick={() => setShowCategoryFilter(!showCategoryFilter)}
+                className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer"
+              >
+                Filter by Category
               </button>
             </div>
           </div>
@@ -196,6 +214,30 @@ export default function TransactionsPage() {
                   className="w-full p-2 border rounded-lg"
                   placeholder="Enter maximum amount"
                 />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showCategoryFilter && (
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category
+                </label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full p-2 border rounded-lg"
+                >
+                  <option value="">All Categories</option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
