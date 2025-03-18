@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
 import { deposit, withdraw } from "@/store/slices/accountSlice";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function ProfilePage() {
   const searchParams = useSearchParams();
@@ -20,6 +20,26 @@ export default function ProfilePage() {
   const [transactionType, setTransactionType] = useState<
     "deposit" | "withdraw" | null
   >(null);
+
+  // Handle Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && showModal) {
+        setShowModal(false);
+        setTransactionType(null);
+        setAmount("");
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [showModal]);
+
+  const closeModal = () => {
+    setShowModal(false);
+    setTransactionType(null);
+    setAmount("");
+  };
 
   // If no account ID is provided, use the selected account
   const account = accountId
@@ -138,8 +158,14 @@ export default function ProfilePage() {
 
       {/* Transaction Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+          onClick={closeModal}
+        >
+          <div
+            className="bg-white rounded-lg p-6 max-w-md w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className="text-xl font-semibold mb-4">
               {transactionType === "deposit" ? "Deposit" : "Withdraw"}
             </h2>
@@ -158,11 +184,7 @@ export default function ProfilePage() {
                 Confirm
               </button>
               <button
-                onClick={() => {
-                  setShowModal(false);
-                  setTransactionType(null);
-                  setAmount("");
-                }}
+                onClick={closeModal}
                 className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors cursor-pointer"
               >
                 Cancel
