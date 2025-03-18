@@ -2,6 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { accounts } from "@/data/accounts";
+import { user } from "@/data/user";
+import Image from "next/image";
 
 export default function ProfilePage() {
   const searchParams = useSearchParams();
@@ -31,9 +33,22 @@ export default function ProfilePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">
-          Account Profile
-        </h1>
+        <div className="flex items-center gap-6 mb-8">
+          <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg">
+            <Image
+              src={user.profileImage}
+              alt={`${user.name}'s profile picture`}
+              fill
+              className="object-cover"
+              sizes="96px"
+              priority
+            />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
+            <p className="text-gray-500">{user.email}</p>
+          </div>
+        </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="space-y-4">
