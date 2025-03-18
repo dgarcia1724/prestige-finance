@@ -5,6 +5,7 @@ import "./globals.css";
 import MobileNavbar from "@/components/MobileNavbar";
 import Header from "@/components/Header";
 import DesktopSidebar from "@/components/DesktopSidebar";
+import { Providers } from "@/store/provider";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -36,10 +37,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} antialiased`}
       >
-        <Header />
-        <DesktopSidebar />
-        <main className="pt-16 pb-16 md:pl-64">{children}</main>
-        <MobileNavbar />
+        <Providers>
+          <Header />
+          <DesktopSidebar />
+          <main className="pt-16 pb-16 md:pl-64">{children}</main>
+          <MobileNavbar />
+        </Providers>
       </body>
     </html>
   );

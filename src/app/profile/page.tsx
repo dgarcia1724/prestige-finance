@@ -1,18 +1,30 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { accounts } from "@/data/accounts";
 import { user } from "@/data/user";
 import Image from "next/image";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store/store";
+import { deposit, withdraw } from "@/store/slices/accountSlice";
+import { useState } from "react";
 
 export default function ProfilePage() {
   const searchParams = useSearchParams();
   const accountId = searchParams.get("id");
+  const dispatch = useDispatch();
+  const { accounts, selectedAccountId } = useSelector(
+    (state: RootState) => state.account
+  );
+  const [amount, setAmount] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [transactionType, setTransactionType] = useState<
+    "deposit" | "withdraw" | null
+  >(null);
 
-  // If no account ID is provided, use the first account as default
+  // If no account ID is provided, use the selected account
   const account = accountId
     ? accounts.find((acc) => acc.id === accountId)
-    : accounts[0];
+    : accounts.find((acc) => acc.id === selectedAccountId);
 
   if (!account) {
     return (
@@ -29,6 +41,21 @@ export default function ProfilePage() {
     style: "currency",
     currency: "USD",
   }).format(Math.abs(account.balance));
+
+  const handleTransaction = () => {
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) return;
+
+    if (transactionType === "deposit") {
+      dispatch(deposit({ accountId: account.id, amount: numAmount }));
+    } else if (transactionType === "withdraw") {
+      dispatch(withdraw({ accountId: account.id, amount: numAmount }));
+    }
+
+    setAmount("");
+    setShowModal(false);
+    setTransactionType(null);
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -71,10 +98,22 @@ export default function ProfilePage() {
                 {formattedBalance}
               </p>
               <div className="flex gap-4 mt-4">
-                <button className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <button
+                  onClick={() => {
+                    setTransactionType("deposit");
+                    setShowModal(true);
+                  }}
+                  className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
                   Deposit
                 </button>
-                <button className="flex-1 bg-white text-blue-600 border border-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors">
+                <button
+                  onClick={() => {
+                    setTransactionType("withdraw");
+                    setShowModal(true);
+                  }}
+                  className="flex-1 bg-white text-blue-600 border border-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors"
+                >
                   Withdraw
                 </button>
               </div>
@@ -96,6 +135,42 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Transaction Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h2 className="text-xl font-semibold mb-4">
+              {transactionType === "deposit" ? "Deposit" : "Withdraw"}
+            </h2>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Enter amount"
+              className="w-full p-2 border rounded-lg mb-4"
+            />
+            <div className="flex gap-4">
+              <button
+                onClick={handleTransaction}
+                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  setTransactionType(null);
+                  setAmount("");
+                }}
+                className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
