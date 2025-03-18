@@ -103,7 +103,7 @@ export default function ProfilePage() {
                     setTransactionType("deposit");
                     setShowModal(true);
                   }}
-                  className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer"
                 >
                   Deposit
                 </button>
@@ -112,7 +112,7 @@ export default function ProfilePage() {
                     setTransactionType("withdraw");
                     setShowModal(true);
                   }}
-                  className="flex-1 bg-white text-blue-600 border border-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors"
+                  className="flex-1 bg-white text-purple-600 border border-purple-600 px-4 py-2 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer"
                 >
                   Withdraw
                 </button>
@@ -153,7 +153,7 @@ export default function ProfilePage() {
             <div className="flex gap-4">
               <button
                 onClick={handleTransaction}
-                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer"
               >
                 Confirm
               </button>
@@ -163,7 +163,7 @@ export default function ProfilePage() {
                   setTransactionType(null);
                   setAmount("");
                 }}
-                className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
