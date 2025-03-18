@@ -2,11 +2,15 @@
 
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { useState } from "react";
 
 export default function TransactionsPage() {
   const { accounts, selectedAccountId } = useSelector(
     (state: RootState) => state.account
   );
+  const [showDateFilter, setShowDateFilter] = useState(false);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   // Get the selected account
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
@@ -27,6 +31,27 @@ export default function TransactionsPage() {
       day: "numeric",
     });
   };
+
+  // Filter transactions by date range
+  const filteredTransactions = selectedAccount?.transactions.filter(
+    (transaction) => {
+      if (!startDate && !endDate) return true;
+      const transactionDate = new Date(transaction.date);
+
+      if (startDate && endDate) {
+        return (
+          transactionDate >= new Date(startDate) &&
+          transactionDate <= new Date(endDate)
+        );
+      } else if (startDate) {
+        return transactionDate >= new Date(startDate);
+      } else if (endDate) {
+        return transactionDate <= new Date(endDate);
+      }
+
+      return true;
+    }
+  );
 
   if (!selectedAccount) {
     return (
@@ -56,13 +81,52 @@ export default function TransactionsPage() {
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">
-            {selectedAccount.type}
-          </h2>
-          <p className="text-gray-500">
-            Account Number: •••• {selectedAccount.accountNumber.slice(-4)}
-          </p>
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                {selectedAccount.type}
+              </h2>
+              <p className="text-gray-500">
+                Account Number: •••• {selectedAccount.accountNumber.slice(-4)}
+              </p>
+            </div>
+            <button
+              onClick={() => setShowDateFilter(!showDateFilter)}
+              className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+            >
+              Filter by Date
+            </button>
+          </div>
         </div>
+
+        {showDateFilter && (
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -83,7 +147,7 @@ export default function TransactionsPage() {
               </tr>
             </thead>
             <tbody>
-              {selectedAccount.transactions.map((transaction) => (
+              {filteredTransactions?.map((transaction) => (
                 <tr
                   key={transaction.id}
                   className="border-b border-gray-100 last:border-0"
