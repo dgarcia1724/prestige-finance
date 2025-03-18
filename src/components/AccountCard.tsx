@@ -68,9 +68,9 @@ const AccountCard = ({ type, balance, accountNumber }: AccountCardProps) => {
 
   return (
     <div
-      className={`relative w-full rounded-xl shadow-sm border border-gray-100 overflow-hidden ${theme.bgGradient} transition-transform hover:scale-[1.02] cursor-pointer`}
+      className={`relative w-full rounded-xl shadow-sm border border-gray-100 overflow-hidden ${theme.bgGradient} transition-transform hover:scale-[1.02] cursor-pointer flex flex-col h-full`}
     >
-      <div className="p-5">
+      <div className="p-5 flex-grow">
         {/* Card Header */}
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-2">
