@@ -5,10 +5,11 @@ import { RootState } from "@/store/store";
 import { selectAccount } from "@/store/slices/accountSlice";
 import { useState, useEffect } from "react";
 import { friends } from "@/data/friends";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function SendPage() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { accounts, selectedAccountId } = useSelector(
     (state: RootState) => state.account
@@ -19,6 +20,7 @@ export default function SendPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showSuccessScreen, setShowSuccessScreen] = useState(false);
 
   // Get the selected account
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
@@ -84,13 +86,59 @@ export default function SendPage() {
 
   const handleConfirmSend = () => {
     // TODO: Implement the actual money sending logic here
-    setAmount("");
-    setDescription("");
-    setSelectedFriend("");
     setShowReviewModal(false);
+    setShowSuccessScreen(true);
   };
 
   const selectedFriendData = friends.find((f) => f.userId === selectedFriend);
+
+  if (showSuccessScreen) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-md mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Money Sent Successfully!
+            </h1>
+            <p className="text-gray-500">
+              Your payment of {formatCurrency(parseFloat(amount))} has been sent
+              to {selectedFriendData?.name}
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <button
+              onClick={() => router.push("/accounts")}
+              className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer"
+            >
+              Return to Accounts
+            </button>
+            <button
+              onClick={() => router.push("/transactions")}
+              className="w-full bg-white text-purple-600 border border-purple-600 px-4 py-3 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer"
+            >
+              View Transaction History
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
