@@ -2,8 +2,11 @@
 
 import { friends } from "@/data/friends";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function FriendsPage() {
+  const router = useRouter();
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -33,7 +36,10 @@ export default function FriendsPage() {
                   <p className="text-sm text-gray-500">ID: {friend.userId}</p>
                 </div>
               </div>
-              <button className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer">
+              <button
+                onClick={() => router.push(`/send?friend=${friend.userId}`)}
+                className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors cursor-pointer"
+              >
                 Send Money
               </button>
             </div>

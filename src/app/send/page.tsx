@@ -3,19 +3,31 @@
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
 import { selectAccount } from "@/store/slices/accountSlice";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { friends } from "@/data/friends";
+import { useSearchParams } from "next/navigation";
 
 export default function SendPage() {
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
   const { accounts, selectedAccountId } = useSelector(
     (state: RootState) => state.account
   );
-  const [recipientEmail, setRecipientEmail] = useState("");
+  const [selectedFriend, setSelectedFriend] = useState("");
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Get the selected account
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
+
+  // Handle friend parameter from URL
+  useEffect(() => {
+    const friendId = searchParams.get("friend");
+    if (friendId) {
+      setSelectedFriend(friendId);
+    }
+  }, [searchParams]);
 
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -24,6 +36,11 @@ export default function SendPage() {
       currency: "USD",
     }).format(Math.abs(amount));
   };
+
+  // Filter friends based on search query
+  const filteredFriends = friends.filter((friend) =>
+    friend.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (!selectedAccount) {
     return (
@@ -81,58 +98,148 @@ export default function SendPage() {
           </div>
         </div>
 
-        {/* Send Money Form */}
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Recipient Email
-            </label>
-            <input
-              type="email"
-              value={recipientEmail}
-              onChange={(e) => setRecipientEmail(e.target.value)}
-              placeholder="Enter recipient's email"
-              className="w-full p-2 border rounded-lg"
-            />
-          </div>
+        {/* Friend Selection */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Select Friend
+          </label>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Amount
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                $
-              </span>
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-                className="w-full p-2 pl-7 border rounded-lg"
-                min="0"
-                step="0.01"
-              />
+          {/* Selected Friend Display */}
+          {selectedFriend && (
+            <div className="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+              <div className="flex items-center gap-3">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                  <img
+                    src={
+                      friends.find((f) => f.userId === selectedFriend)
+                        ?.profileImage
+                    }
+                    alt={`${
+                      friends.find((f) => f.userId === selectedFriend)?.name
+                    }'s profile picture`}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Selected Friend</p>
+                  <p className="font-medium text-gray-900">
+                    {friends.find((f) => f.userId === selectedFriend)?.name}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSelectedFriend("")}
+                  className="ml-auto p-1 hover:bg-purple-100 rounded-full transition-colors cursor-pointer"
+                >
+                  <svg
+                    className="w-5 h-5 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description (Optional)
-            </label>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search friends by name"
+            className="w-full p-2 border rounded-lg mb-2"
+          />
+          <div className="max-h-48 overflow-y-auto border rounded-lg">
+            {filteredFriends.map((friend) => (
+              <button
+                key={friend.userId}
+                onClick={() => setSelectedFriend(friend.userId)}
+                className={`w-full flex items-center justify-between p-3 hover:bg-gray-50 transition-colors cursor-pointer ${
+                  selectedFriend === friend.userId
+                    ? "bg-purple-50 border-purple-200"
+                    : ""
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                    <img
+                      src={friend.profileImage}
+                      alt={`${friend.name}'s profile picture`}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <span className="font-medium text-gray-900">
+                    {friend.name}
+                  </span>
+                </div>
+                {selectedFriend === friend.userId && (
+                  <svg
+                    className="w-5 h-5 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Amount Input */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Amount
+          </label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+              $
+            </span>
             <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add a note"
-              className="w-full p-2 border rounded-lg"
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0.00"
+              className="w-full p-2 pl-7 border rounded-lg"
+              min="0"
+              step="0.01"
             />
           </div>
-
-          <button className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer">
-            Send Money
-          </button>
         </div>
+
+        {/* Description Input */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Description (Optional)
+          </label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Add a note"
+            className="w-full p-2 border rounded-lg"
+          />
+        </div>
+
+        {/* Send Button */}
+        <button
+          className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!selectedFriend || !amount || parseFloat(amount) <= 0}
+        >
+          Send Money
+        </button>
       </div>
     </div>
   );
