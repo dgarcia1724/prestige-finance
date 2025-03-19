@@ -22,6 +22,11 @@ interface AccountState {
   selectedAccountId: string | null;
 }
 
+interface AddTransactionPayload {
+  accountId: string;
+  transaction: Omit<Transaction, "id">;
+}
+
 const initialState: AccountState = {
   accounts: accounts,
   selectedAccountId: accounts[0]?.id || null,
@@ -60,9 +65,26 @@ const accountSlice = createSlice({
       state.accounts = action.payload.accounts;
       state.selectedAccountId = action.payload.selectedAccountId;
     },
+    addTransaction: (state, action: PayloadAction<AddTransactionPayload>) => {
+      const account = state.accounts.find(
+        (acc) => acc.id === action.payload.accountId
+      );
+      if (account) {
+        const newTransaction = {
+          ...action.payload.transaction,
+          id: Date.now().toString(), // Generate a unique ID
+        };
+        account.transactions.unshift(newTransaction); // Add to beginning of array
+      }
+    },
   },
 });
 
-export const { selectAccount, deposit, withdraw, setAccountState } =
-  accountSlice.actions;
+export const {
+  selectAccount,
+  deposit,
+  withdraw,
+  setAccountState,
+  addTransaction,
+} = accountSlice.actions;
 export default accountSlice.reducer;
