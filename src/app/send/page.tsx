@@ -18,6 +18,7 @@ export default function SendPage() {
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   // Get the selected account
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
@@ -66,7 +67,7 @@ export default function SendPage() {
     );
   }
 
-  const handleSendMoney = () => {
+  const handleReview = () => {
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
       setError("Please enter a valid amount");
@@ -78,11 +79,18 @@ export default function SendPage() {
       return;
     }
 
+    setShowReviewModal(true);
+  };
+
+  const handleConfirmSend = () => {
     // TODO: Implement the actual money sending logic here
     setAmount("");
     setDescription("");
     setSelectedFriend("");
+    setShowReviewModal(false);
   };
+
+  const selectedFriendData = friends.find((f) => f.userId === selectedFriend);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -161,20 +169,15 @@ export default function SendPage() {
               <div className="flex items-center gap-3">
                 <div className="relative w-10 h-10 rounded-full overflow-hidden">
                   <img
-                    src={
-                      friends.find((f) => f.userId === selectedFriend)
-                        ?.profileImage
-                    }
-                    alt={`${
-                      friends.find((f) => f.userId === selectedFriend)?.name
-                    }'s profile picture`}
+                    src={selectedFriendData?.profileImage}
+                    alt={`${selectedFriendData?.name}'s profile picture`}
                     className="object-cover w-full h-full"
                   />
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Selected Friend</p>
                   <p className="font-medium text-gray-900">
-                    {friends.find((f) => f.userId === selectedFriend)?.name}
+                    {selectedFriendData?.name}
                   </p>
                 </div>
                 <button
@@ -295,15 +298,82 @@ export default function SendPage() {
           />
         </div>
 
-        {/* Send Button */}
+        {/* Review Button */}
         <button
-          onClick={handleSendMoney}
+          onClick={handleReview}
           className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={!selectedFriend || !amount || parseFloat(amount) <= 0}
         >
-          Send Money
+          Review & Send
         </button>
       </div>
+
+      {/* Review Modal */}
+      {showReviewModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h2 className="text-xl font-semibold mb-4">Review Transaction</h2>
+
+            <div className="space-y-4 mb-6">
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                  <img
+                    src={selectedFriendData?.profileImage}
+                    alt={`${selectedFriendData?.name}'s profile picture`}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Sending to</p>
+                  <p className="font-medium text-gray-900">
+                    {selectedFriendData?.name}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-500">Amount</p>
+                <p className="text-xl font-semibold text-gray-900">
+                  {formatCurrency(parseFloat(amount))}
+                </p>
+              </div>
+
+              {description && (
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-500">Note</p>
+                  <p className="font-medium text-gray-900">{description}</p>
+                </div>
+              )}
+
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-500">From Account</p>
+                <p className="font-medium text-gray-900">
+                  {selectedAccount.type} ••••{" "}
+                  {selectedAccount.accountNumber.slice(-4)}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Available: {formatCurrency(selectedAccount.balance)}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <button
+                onClick={handleConfirmSend}
+                className="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer"
+              >
+                Confirm & Send
+              </button>
+              <button
+                onClick={() => setShowReviewModal(false)}
+                className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
