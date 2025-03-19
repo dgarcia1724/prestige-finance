@@ -90,7 +90,7 @@ export default function SendPage() {
 
   const handleConfirmSend = () => {
     const numAmount = parseFloat(amount);
-    if (selectedAccountId && selectedFriend) {
+    if (selectedAccountId && selectedFriendData) {
       // Withdraw the amount
       dispatch(withdraw({ accountId: selectedAccountId, amount: numAmount }));
 
@@ -105,7 +105,7 @@ export default function SendPage() {
               day: "numeric",
             }),
             amount: -numAmount, // Negative amount since we're sending money
-            description: description || `Sent to ${selectedFriend}`,
+            description: description || `Sent to ${selectedFriendData.name}`,
             category: "Friends",
           },
         })
