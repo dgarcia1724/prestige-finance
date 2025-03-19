@@ -17,6 +17,7 @@ export default function SendPage() {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState("");
 
   // Get the selected account
   const selectedAccount = accounts.find((acc) => acc.id === selectedAccountId);
@@ -28,6 +29,16 @@ export default function SendPage() {
       setSelectedFriend(friendId);
     }
   }, [searchParams]);
+
+  // Auto-hide error after 3 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -55,8 +66,48 @@ export default function SendPage() {
     );
   }
 
+  const handleSendMoney = () => {
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      setError("Please enter a valid amount");
+      return;
+    }
+
+    if (numAmount > Math.abs(selectedAccount.balance)) {
+      setError("Insufficient funds");
+      return;
+    }
+
+    // TODO: Implement the actual money sending logic here
+    setAmount("");
+    setDescription("");
+    setSelectedFriend("");
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Error Notification */}
+      {error && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50">
+          <div className="flex items-center">
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>{error}</span>
+          </div>
+        </div>
+      )}
+
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Send Money</h1>
         <p className="text-gray-500">Send money to friends and family</p>
@@ -127,7 +178,10 @@ export default function SendPage() {
                   </p>
                 </div>
                 <button
-                  onClick={() => setSelectedFriend("")}
+                  onClick={() => {
+                    setSelectedFriend("");
+                    setError("");
+                  }}
                   className="ml-auto p-1 hover:bg-purple-100 rounded-full transition-colors cursor-pointer"
                 >
                   <svg
@@ -159,7 +213,10 @@ export default function SendPage() {
             {filteredFriends.map((friend) => (
               <button
                 key={friend.userId}
-                onClick={() => setSelectedFriend(friend.userId)}
+                onClick={() => {
+                  setSelectedFriend(friend.userId);
+                  setError("");
+                }}
                 className={`w-full flex items-center justify-between p-3 hover:bg-gray-50 transition-colors cursor-pointer ${
                   selectedFriend === friend.userId
                     ? "bg-purple-50 border-purple-200"
@@ -210,9 +267,14 @@ export default function SendPage() {
             <input
               type="number"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                setError("");
+              }}
               placeholder="0.00"
-              className="w-full p-2 pl-7 border rounded-lg"
+              className={`w-full p-2 pl-7 border rounded-lg ${
+                error ? "border-red-500" : ""
+              }`}
               min="0"
               step="0.01"
             />
@@ -235,6 +297,7 @@ export default function SendPage() {
 
         {/* Send Button */}
         <button
+          onClick={handleSendMoney}
           className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={!selectedFriend || !amount || parseFloat(amount) <= 0}
         >
