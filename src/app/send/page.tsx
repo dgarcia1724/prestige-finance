@@ -2,7 +2,7 @@
 
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
-import { selectAccount } from "@/store/slices/accountSlice";
+import { selectAccount, withdraw } from "@/store/slices/accountSlice";
 import { useState, useEffect } from "react";
 import { friends } from "@/data/friends";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -85,9 +85,12 @@ export default function SendPage() {
   };
 
   const handleConfirmSend = () => {
-    // TODO: Implement the actual money sending logic here
-    setShowReviewModal(false);
-    setShowSuccessScreen(true);
+    const numAmount = parseFloat(amount);
+    if (selectedAccountId) {
+      dispatch(withdraw({ accountId: selectedAccountId, amount: numAmount }));
+      setShowReviewModal(false);
+      setShowSuccessScreen(true);
+    }
   };
 
   const selectedFriendData = friends.find((f) => f.userId === selectedFriend);
