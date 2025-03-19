@@ -123,8 +123,19 @@ export default function SendPage() {
 
           <div className="space-y-4">
             <button
-              onClick={() => router.push("/accounts")}
+              onClick={() => {
+                setShowSuccessScreen(false);
+                setAmount("");
+                setDescription("");
+                setSelectedFriend("");
+              }}
               className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer"
+            >
+              Send Another Payment
+            </button>
+            <button
+              onClick={() => router.push("/accounts")}
+              className="w-full bg-white text-purple-600 border border-purple-600 px-4 py-3 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer"
             >
               Return to Accounts
             </button>
