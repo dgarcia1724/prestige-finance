@@ -2,6 +2,14 @@
 
 A modern, responsive web application for managing personal finances, built with Next.js and TypeScript.
 
+## Live Demo
+
+🌐 [View Live Demo](https://prestige-financial-danny-g.netlify.app/accounts)
+
+## Screenshots
+
+![Prestige Finance Dashboard](screen-shots/Screenshot%202025-03-20%20090110.png)
+
 ## Features
 
 - 💳 Account Management
