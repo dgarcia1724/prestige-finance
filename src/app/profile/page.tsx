@@ -215,6 +215,7 @@ export default function ProfilePage() {
       {/* Transaction Modal */}
       {showModal && (
         <div
+          data-testid="modal-overlay"
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
           onClick={closeModal}
         >

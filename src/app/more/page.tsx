@@ -38,32 +38,37 @@ export default function MorePage() {
               {section.title}
             </h2>
             <div className="space-y-2">
-              {section.links.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={`flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer ${
-                    pathname === link.href
-                      ? "bg-purple-50 text-purple-600"
-                      : "hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="font-medium">{link.name}</span>
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              {section.links.map((link) => {
+                // Ensure pathname exists and matches exactly
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={`flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer ${
+                      isActive
+                        ? "bg-purple-50 text-purple-600"
+                        : "hover:bg-gray-50"
+                    }`}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </Link>
-              ))}
+                    <span className="font-medium">{link.name}</span>
+                    <svg
+                      data-testid="chevron-icon"
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M9 5l7 7-7 7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                      />
+                    </svg>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         ))}

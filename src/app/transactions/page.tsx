@@ -159,10 +159,14 @@ export default function TransactionsPage() {
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="start-date"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Start Date
                 </label>
                 <input
+                  id="start-date"
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
@@ -170,10 +174,14 @@ export default function TransactionsPage() {
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="end-date"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   End Date
                 </label>
                 <input
+                  id="end-date"
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
@@ -188,10 +196,14 @@ export default function TransactionsPage() {
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="min-amount"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Minimum Amount
                 </label>
                 <input
+                  id="min-amount"
                   type="number"
                   min="0"
                   step="0.01"
@@ -202,10 +214,14 @@ export default function TransactionsPage() {
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="max-amount"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Maximum Amount
                 </label>
                 <input
+                  id="max-amount"
                   type="number"
                   min="0"
                   step="0.01"
@@ -223,10 +239,14 @@ export default function TransactionsPage() {
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="flex gap-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="category"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Category
                 </label>
                 <select
+                  id="category"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
                   className="w-full p-2 border rounded-lg"

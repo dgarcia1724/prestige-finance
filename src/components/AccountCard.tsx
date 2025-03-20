@@ -81,9 +81,9 @@ const AccountCard = ({
   };
 
   return (
-    <div
+    <button
       onClick={handleClick}
-      className={`relative w-full rounded-xl shadow-sm border border-gray-100 overflow-hidden ${theme.bgGradient} transition-transform hover:scale-[1.02] cursor-pointer flex flex-col h-full`}
+      className={`relative w-full rounded-xl shadow-sm border border-gray-100 overflow-hidden ${theme.bgGradient} transition-transform hover:scale-[1.02] cursor-pointer flex flex-col h-full text-left`}
     >
       <div className="p-5 flex-grow">
         {/* Card Header */}
@@ -120,8 +120,11 @@ const AccountCard = ({
       </div>
 
       {/* Gradient Bar at Bottom */}
-      <div className={`h-1.5 w-full bg-gradient-to-r ${theme.gradient}`} />
-    </div>
+      <div
+        data-testid="gradient-bar"
+        className={`h-1.5 w-full bg-gradient-to-r ${theme.gradient}`}
+      />
+    </button>
   );
 };
 
