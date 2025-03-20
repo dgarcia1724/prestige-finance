@@ -5,11 +5,20 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
 import { setAccountState } from "@/store/slices/accountSlice";
 
+interface Transaction {
+  id: string;
+  date: string;
+  amount: number;
+  description: string;
+  category: string;
+}
+
 interface Account {
   id: string;
   type: string;
   accountNumber: string;
   balance: number;
+  transactions: Transaction[];
 }
 
 interface AccountState {
